@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>周报网站 - 当前访问地址</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 700px;
+            width: 100%;
+            padding: 50px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        h1 {
+            color: #2d3748;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 6px 16px;
+            background: #48bb78;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .url-section {
+            background: #f7fafc;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .label {
+            color: #718096;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .url {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #e2e8f0;
+            margin-bottom: 15px;
+        }
+
+        .url-text {
+            flex: 1;
+            color: #2d3748;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            padding: 8px 16px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .copy-btn:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .copy-btn:active {
+            transform: translateY(0);
+        }
+
+        .copy-btn.copied {
+            background: #48bb78;
+        }
+
+        .actions {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #f7fafc;
+        }
+
+        .info {
+            background: #ebf8ff;
+            border-left: 4px solid #4299e1;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .info-title {
+            color: #2c5282;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-text {
+            color: #2d3748;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .meta {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+            color: #718096;
+            font-size: 0.85rem;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .url {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .copy-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">📊</div>
+            <h1>周报数据可视化平台</h1>
+            <span class="status" id="status">🟢 服务运行中</span>
+        </div>
+
+        <div class="url-section">
+            <div class="label">当前访问地址</div>
+            <div class="url">
+                <span class="url-text" id="tunnel-url">加载中...</span>
+                <button class="copy-btn" onclick="copyUrl()">📋 复制</button>
+            </div>
+
+            <div class="actions">
+                <a href="#" id="visit-btn" class="btn btn-primary" target="_blank">
+                    🚀 立即访问
+                </a>
+                <button class="btn btn-secondary" onclick="location.reload()">
+                    🔄 刷新地址
+                </button>
+            </div>
+        </div>
+
+        <div class="info">
+            <div class="info-title">
+                💡 使用说明
+            </div>
+            <div class="info-text">
+                • 此地址为临时地址，关闭服务后失效<br>
+                • 重新启动服务后，地址会自动更新<br>
+                • 建议收藏本页面，每次访问查看最新地址
+            </div>
+        </div>
+
+        <div class="meta">
+            <div class="meta-item">
+                <span>🕐</span>
+                <span id="update-time">更新时间: 加载中...</span>
+            </div>
+            <div class="meta-item">
+                <span>🔐</span>
+                <span>Cloudflare Tunnel</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 从 config.json 加载当前的 tunnel URL
+        async function loadTunnelUrl() {
+            try {
+                const response = await fetch('config.json');
+                const config = await response.json();
+
+                if (config.tunnelUrl) {
+                    document.getElementById('tunnel-url').textContent = config.tunnelUrl;
+                    document.getElementById('visit-btn').href = config.tunnelUrl;
+                    document.getElementById('update-time').textContent =
+                        '更新时间: ' + new Date(config.updateTime).toLocaleString('zh-CN');
+                    document.getElementById('status').textContent = '🟢 服务运行中';
+                } else {
+                    showError();
+                }
+            } catch (error) {
+                console.error('加载失败:', error);
+                showError();
+            }
+        }
+
+        function showError() {
+            document.getElementById('tunnel-url').textContent = '暂无可用地址';
+            document.getElementById('status').textContent = '🔴 服务未启动';
+            document.getElementById('status').style.background = '#f56565';
+            document.getElementById('visit-btn').style.opacity = '0.5';
+            document.getElementById('visit-btn').style.pointerEvents = 'none';
+        }
+
+        function copyUrl() {
+            const url = document.getElementById('tunnel-url').textContent;
+            if (url === '加载中...' || url === '暂无可用地址') return;
+
+            navigator.clipboard.writeText(url).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✅ 已复制';
+                btn.classList.add('copied');
+
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        // 页面加载时获取 URL
+        loadTunnelUrl();
+
+        // 每30秒自动刷新一次
+        setInterval(loadTunnelUrl, 30000);
+    </script>
+</body>
+</html>

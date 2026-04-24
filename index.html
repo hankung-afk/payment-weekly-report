@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="0; url=tunnel-url.html">
+    <title>周报网站 - 访问入口</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 50px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        h1 {
+            color: #2d3748;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #718096;
+            font-size: 1rem;
+            margin-bottom: 30px;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 4px solid #e2e8f0;
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px 0;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .message {
+            color: #4a5568;
+            font-size: 0.9rem;
+            margin-top: 20px;
+        }
+
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+            color: #a0aec0;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">📊</div>
+        <h1>周报数据可视化平台</h1>
+        <p class="subtitle">正在跳转到最新地址...</p>
+
+        <div class="loading"></div>
+
+        <p class="message">
+            如果没有自动跳转，请<a href="tunnel-url.html" style="color: #667eea; text-decoration: none;">点击这里</a>
+        </p>
+
+        <div class="footer">
+            🔐 使用 Cloudflare Tunnel 提供安全访问<br>
+            更新时间会在跳转页面显示
+        </div>
+    </div>
+
+    <script>
+        // 3秒后如果还没跳转，显示提示
+        setTimeout(() => {
+            document.querySelector('.message').innerHTML =
+                '跳转时间较长，请<a href="tunnel-url.html" style="color: #667eea; text-decoration: none; font-weight: bold;">点击这里手动跳转</a>';
+        }, 3000);
+    </script>
+</body>
+</html>
