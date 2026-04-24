@@ -272,9 +272,23 @@
     </div>
 
     <script>
+        // 检查当前时间是否在服务时间内
+        function isServiceTime() {
+            const now = new Date();
+            const hour = now.getHours();
+            // 服务时间：00:00 - 19:00（早上到晚上7点）
+            return hour >= 0 && hour < 19;
+        }
+
         // 从 config.json 加载当前的 tunnel URL
         async function loadTunnelUrl() {
             try {
+                // 检查服务时间
+                if (!isServiceTime()) {
+                    showOfflineMessage();
+                    return;
+                }
+
                 const response = await fetch('config.json');
                 const config = await response.json();
 
@@ -290,6 +304,25 @@
             } catch (error) {
                 console.error('加载失败:', error);
                 showError();
+            }
+        }
+
+        function showOfflineMessage() {
+            document.getElementById('tunnel-url').textContent = '服务已暂停';
+            document.getElementById('status').textContent = '🌙 非服务时间';
+            document.getElementById('status').style.background = '#64748b';
+            document.getElementById('visit-btn').style.opacity = '0.5';
+            document.getElementById('visit-btn').style.pointerEvents = 'none';
+            document.getElementById('update-time').textContent =
+                '服务时间: 每天 00:00 - 19:00';
+
+            // 添加提示信息
+            const infoDiv = document.querySelector('.info-text');
+            if (infoDiv) {
+                infoDiv.innerHTML =
+                    '• 当前为非服务时间（19:00 - 24:00）<br>' +
+                    '• 服务将在明天 00:00 恢复<br>' +
+                    '• 如有紧急需求，请联系管理员手动启动';
             }
         }
 
