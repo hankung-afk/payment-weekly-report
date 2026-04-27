@@ -289,12 +289,6 @@
         // 从 config.json 加载当前的 tunnel URL
         async function loadTunnelUrl() {
             try {
-                // 检查服务时间
-                if (!isServiceTime()) {
-                    showOfflineMessage();
-                    return;
-                }
-
                 const response = await fetch('config.json');
                 const config = await response.json();
 
@@ -302,7 +296,12 @@
                     // 有网址，直接跳转
                     window.location.href = config.tunnelUrl;
                 } else {
-                    showOfflineMessage();
+                    // 无网址，检查服务时间显示相应信息
+                    if (!isServiceTime()) {
+                        showOfflineMessage();
+                    } else {
+                        showOfflineMessage(); // 服务时间内但无网址
+                    }
                 }
             } catch (error) {
                 console.error('加载失败:', error);
