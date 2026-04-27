@@ -276,8 +276,14 @@
         function isServiceTime() {
             const now = new Date();
             const hour = now.getHours();
-            // 服务时间：00:00 - 19:00（早上到晚上7点）
-            return hour >= 0 && hour < 19;
+            const minute = now.getMinutes();
+
+            // 服务时间：9:30 - 19:00
+            const currentMinutes = hour * 60 + minute;
+            const startMinutes = 9 * 60 + 30;  // 9:30
+            const endMinutes = 19 * 60;         // 19:00
+
+            return currentMinutes >= startMinutes && currentMinutes < endMinutes;
         }
 
         // 从 config.json 加载当前的 tunnel URL
@@ -293,50 +299,54 @@
                 const config = await response.json();
 
                 if (config.tunnelUrl) {
-                    document.getElementById('tunnel-url').textContent = config.tunnelUrl;
-                    document.getElementById('visit-btn').href = config.tunnelUrl;
-                    document.getElementById('update-time').textContent =
-                        '更新时间: ' + new Date(config.updateTime).toLocaleString('zh-CN');
-                    document.getElementById('status').textContent = '🟢 服务运行中';
+                    // 有网址，直接跳转
+                    window.location.href = config.tunnelUrl;
                 } else {
-                    showError();
+                    showOfflineMessage();
                 }
             } catch (error) {
                 console.error('加载失败:', error);
-                showError();
+                showOfflineMessage();
             }
         }
 
         function showOfflineMessage() {
+            const now = new Date();
+            const hour = now.getHours();
+            const minute = now.getMinutes();
+            const currentMinutes = hour * 60 + minute;
+            const startMinutes = 9 * 60 + 30;
+
             document.getElementById('tunnel-url').textContent = '服务已暂停';
-            document.getElementById('status').textContent = '🌙 非服务时间';
+            document.getElementById('status').textContent = '🌙 非营业时间';
             document.getElementById('status').style.background = '#64748b';
             document.getElementById('visit-btn').style.opacity = '0.5';
             document.getElementById('visit-btn').style.pointerEvents = 'none';
             document.getElementById('update-time').textContent =
-                '服务时间: 每天 00:00 - 19:00';
+                '服务时间: 每天 9:30 - 19:00';
 
             // 添加提示信息
             const infoDiv = document.querySelector('.info-text');
             if (infoDiv) {
+                let resumeMessage;
+                if (currentMinutes < startMinutes) {
+                    // 早于 9:30
+                    resumeMessage = '• 服务将在今天 9:30 恢复<br>';
+                } else {
+                    // 晚于 19:00
+                    resumeMessage = '• 服务将在明天 9:30 恢复<br>';
+                }
+
                 infoDiv.innerHTML =
-                    '• 当前为非服务时间（19:00 - 24:00）<br>' +
-                    '• 服务将在明天 00:00 恢复<br>' +
+                    '• 当前为非营业时间<br>' +
+                    resumeMessage +
                     '• 如有紧急需求，请联系管理员手动启动';
             }
         }
 
-        function showError() {
-            document.getElementById('tunnel-url').textContent = '暂无可用地址';
-            document.getElementById('status').textContent = '🔴 服务未启动';
-            document.getElementById('status').style.background = '#f56565';
-            document.getElementById('visit-btn').style.opacity = '0.5';
-            document.getElementById('visit-btn').style.pointerEvents = 'none';
-        }
-
         function copyUrl() {
             const url = document.getElementById('tunnel-url').textContent;
-            if (url === '加载中...' || url === '暂无可用地址') return;
+            if (url === '加载中...' || url === '暂无可用地址' || url === '服务已暂停') return;
 
             navigator.clipboard.writeText(url).then(() => {
                 const btn = event.target;
@@ -353,9 +363,6 @@
 
         // 页面加载时获取 URL
         loadTunnelUrl();
-
-        // 每30秒自动刷新一次
-        setInterval(loadTunnelUrl, 30000);
     </script>
 </body>
 </html>
