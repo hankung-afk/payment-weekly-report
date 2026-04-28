@@ -289,24 +289,20 @@
         // 从 config.json 加载当前的 tunnel URL
         async function loadTunnelUrl() {
             try {
-                // 先检查服务时间
-                if (!isServiceTime()) {
-                    showOfflineMessage();
-                    return;
-                }
-
                 // 营业时间内，检查网址
                 const response = await fetch('config.json');
                 const config = await response.json();
 
-                if (config.tunnelUrl) {
-                    // 有网址，直接跳转
+                if (config.tunnelUrl && isServiceTime()) {
+                    // 有网址且在营业时间，直接跳转
                     window.location.href = config.tunnelUrl;
                 } else {
+                    // 无网址或非营业时间，都显示非营业时间
                     showOfflineMessage();
                 }
             } catch (error) {
                 console.error('加载失败:', error);
+                // 加载失败也显示非营业时间
                 showOfflineMessage();
             }
         }
@@ -341,7 +337,7 @@
                 infoDiv.innerHTML =
                     '• 当前为非营业时间<br>' +
                     resumeMessage +
-                    '• 如需查看数据，请联系管理员';
+                    '• 如需查看数据，请联系管理员 Han';
             }
         }
 
