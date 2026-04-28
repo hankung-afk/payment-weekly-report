@@ -83,9 +83,23 @@
             color: #a0aec0;
             font-size: 0.85rem;
         }
+
+        /* 水印样式 */
+        .watermark {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            font-size: 0.75rem;
+            color: rgba(0, 0, 0, 0.15);
+            pointer-events: none;
+            user-select: none;
+            font-weight: 500;
+            z-index: 9999;
+        }
     </style>
 </head>
 <body>
+    <div class="watermark">数据分析团队</div>
     <div class="container">
         <div class="logo">📊</div>
         <h1>周报数据可视化平台</h1>

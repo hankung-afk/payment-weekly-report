@@ -221,9 +221,29 @@
                 width: 100%;
             }
         }
+
+        /* 水印样式 */
+        .watermark {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            font-size: 0.75rem;
+            color: rgba(0, 0, 0, 0.15);
+            pointer-events: none;
+            user-select: none;
+            font-weight: 500;
+            z-index: 9999;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .watermark {
+                color: rgba(255, 255, 255, 0.1);
+            }
+        }
     </style>
 </head>
 <body>
+    <div class="watermark">数据分析团队</div>
     <div class="container">
         <div class="header">
             <div class="logo">📊</div>
