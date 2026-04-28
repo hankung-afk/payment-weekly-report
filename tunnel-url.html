@@ -310,49 +310,20 @@
         // 从 config.json 加载当前的 tunnel URL
         async function loadTunnelUrl() {
             try {
-                const response = await fetch('config.json');
+                const response = await fetch('config.json?t=' + Date.now()); // 防止缓存
                 const config = await response.json();
 
-                if (config.tunnelUrl) {
-                    // 有网址，先验证是否可用
-                    const isAlive = await checkUrlAlive(config.tunnelUrl);
-                    if (isAlive) {
-                        // 网址可用，直接跳转
-                        window.location.href = config.tunnelUrl;
-                    } else {
-                        // 网址无法访问，显示离线
-                        showOfflineMessage();
-                    }
+                if (config.tunnelUrl && config.status === 'online') {
+                    // 有网址且状态为在线，直接跳转
+                    window.location.href = config.tunnelUrl;
                 } else {
-                    // 无网址显示离线
+                    // 无网址或状态不是online，显示离线
                     showOfflineMessage();
                 }
             } catch (error) {
                 console.error('加载失败:', error);
                 // 加载失败显示离线
                 showOfflineMessage();
-            }
-        }
-
-        // 检查URL是否可访问
-        async function checkUrlAlive(url) {
-            try {
-                // 尝试访问登录页面，设置5秒超时
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 5000);
-
-                const response = await fetch(url + '/login.html', {
-                    method: 'GET',
-                    signal: controller.signal
-                });
-
-                clearTimeout(timeoutId);
-                // 检查是否返回成功状态码
-                return response.ok || response.status === 200;
-            } catch (error) {
-                // 无法访问（超时、网络错误、CORS等）
-                console.log('URL不可访问:', error.message);
-                return false;
             }
         }
 
