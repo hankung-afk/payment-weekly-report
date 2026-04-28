@@ -278,10 +278,10 @@
             const hour = now.getHours();
             const minute = now.getMinutes();
 
-            // 服务时间：9:30 - 19:00
+            // 服务时间：10:00 - 19:00
             const currentMinutes = hour * 60 + minute;
-            const startMinutes = 9 * 60 + 30;  // 9:30
-            const endMinutes = 19 * 60;         // 19:00
+            const startMinutes = 10 * 60;      // 10:00
+            const endMinutes = 19 * 60;        // 19:00
 
             return currentMinutes >= startMinutes && currentMinutes < endMinutes;
         }
@@ -289,6 +289,13 @@
         // 从 config.json 加载当前的 tunnel URL
         async function loadTunnelUrl() {
             try {
+                // 先检查服务时间
+                if (!isServiceTime()) {
+                    showOfflineMessage();
+                    return;
+                }
+
+                // 营业时间内，检查网址
                 const response = await fetch('config.json');
                 const config = await response.json();
 
@@ -296,12 +303,7 @@
                     // 有网址，直接跳转
                     window.location.href = config.tunnelUrl;
                 } else {
-                    // 无网址，检查服务时间显示相应信息
-                    if (!isServiceTime()) {
-                        showOfflineMessage();
-                    } else {
-                        showOfflineMessage(); // 服务时间内但无网址
-                    }
+                    showOfflineMessage();
                 }
             } catch (error) {
                 console.error('加载失败:', error);
@@ -314,7 +316,7 @@
             const hour = now.getHours();
             const minute = now.getMinutes();
             const currentMinutes = hour * 60 + minute;
-            const startMinutes = 9 * 60 + 30;
+            const startMinutes = 10 * 60;  // 10:00
 
             document.getElementById('tunnel-url').textContent = '服务已暂停';
             document.getElementById('status').textContent = '🌙 非营业时间';
@@ -322,24 +324,24 @@
             document.getElementById('visit-btn').style.opacity = '0.5';
             document.getElementById('visit-btn').style.pointerEvents = 'none';
             document.getElementById('update-time').textContent =
-                '服务时间: 每天 9:30 - 19:00';
+                '服务时间: 每天 10:00 - 19:00';
 
             // 添加提示信息
             const infoDiv = document.querySelector('.info-text');
             if (infoDiv) {
                 let resumeMessage;
                 if (currentMinutes < startMinutes) {
-                    // 早于 9:30
-                    resumeMessage = '• 服务将在今天 9:30 恢复<br>';
+                    // 早于 10:00
+                    resumeMessage = '• 服务将在今天 10:00 恢复<br>';
                 } else {
                     // 晚于 19:00
-                    resumeMessage = '• 服务将在明天 9:30 恢复<br>';
+                    resumeMessage = '• 服务将在明天 10:00 恢复<br>';
                 }
 
                 infoDiv.innerHTML =
                     '• 当前为非营业时间<br>' +
                     resumeMessage +
-                    '• 如有紧急需求，请联系管理员手动启动';
+                    '• 如需查看数据，请联系管理员';
             }
         }
 
