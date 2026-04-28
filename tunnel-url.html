@@ -289,54 +289,37 @@
         // 从 config.json 加载当前的 tunnel URL
         async function loadTunnelUrl() {
             try {
-                // 营业时间内，检查网址
                 const response = await fetch('config.json');
                 const config = await response.json();
 
-                if (config.tunnelUrl && isServiceTime()) {
-                    // 有网址且在营业时间，直接跳转
+                if (config.tunnelUrl) {
+                    // 有网址就直接跳转（表示服务可用）
                     window.location.href = config.tunnelUrl;
                 } else {
-                    // 无网址或非营业时间，都显示非营业时间
+                    // 无网址显示非营业时间
                     showOfflineMessage();
                 }
             } catch (error) {
                 console.error('加载失败:', error);
-                // 加载失败也显示非营业时间
+                // 加载失败显示非营业时间
                 showOfflineMessage();
             }
         }
 
         function showOfflineMessage() {
-            const now = new Date();
-            const hour = now.getHours();
-            const minute = now.getMinutes();
-            const currentMinutes = hour * 60 + minute;
-            const startMinutes = 10 * 60;  // 10:00
-
-            document.getElementById('tunnel-url').textContent = '服务已暂停';
-            document.getElementById('status').textContent = '🌙 非营业时间';
+            document.getElementById('tunnel-url').textContent = '服务暂不可用';
+            document.getElementById('status').textContent = '🌙 服务离线';
             document.getElementById('status').style.background = '#64748b';
             document.getElementById('visit-btn').style.opacity = '0.5';
             document.getElementById('visit-btn').style.pointerEvents = 'none';
-            document.getElementById('update-time').textContent =
-                '服务时间: 每天 10:00 - 19:00';
+            document.getElementById('update-time').textContent = '服务当前未运行';
 
             // 添加提示信息
             const infoDiv = document.querySelector('.info-text');
             if (infoDiv) {
-                let resumeMessage;
-                if (currentMinutes < startMinutes) {
-                    // 早于 10:00
-                    resumeMessage = '• 服务将在今天 10:00 恢复<br>';
-                } else {
-                    // 晚于 19:00
-                    resumeMessage = '• 服务将在明天 10:00 恢复<br>';
-                }
-
                 infoDiv.innerHTML =
-                    '• 当前为非营业时间<br>' +
-                    resumeMessage +
+                    '• 服务当前未启动<br>' +
+                    '• 网址可用时将自动恢复<br>' +
                     '• 如需查看数据，请联系管理员 Han';
             }
         }
