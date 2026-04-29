@@ -225,27 +225,28 @@
         /* 水印样式 */
         .watermark {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            font-size: 1.1rem;
-            color: rgba(0, 0, 0, 0.6);
-            background: rgba(255, 255, 255, 0.8);
-            padding: 8px 16px;
-            border-radius: 8px;
-            border: 1px solid rgba(0, 0, 0, 0.1);
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.5rem;
+            color: rgba(0, 0, 0, 0.7);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 12px 32px;
+            border-radius: 12px;
+            border: 2px solid rgba(0, 0, 0, 0.15);
             pointer-events: none;
             user-select: none;
-            font-weight: 700;
+            font-weight: 800;
             z-index: 9999;
-            letter-spacing: 2px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            letter-spacing: 3px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
         @media (prefers-color-scheme: dark) {
             .watermark {
-                color: rgba(255, 255, 255, 0.9);
-                background: rgba(0, 0, 0, 0.6);
-                border-color: rgba(255, 255, 255, 0.2);
+                color: rgba(255, 255, 255, 0.95);
+                background: rgba(0, 0, 0, 0.7);
+                border-color: rgba(255, 255, 255, 0.3);
             }
         }
     </style>
