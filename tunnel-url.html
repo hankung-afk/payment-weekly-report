@@ -321,17 +321,64 @@
                 const response = await fetch('config.json?t=' + Date.now()); // 防止缓存
                 const config = await response.json();
 
-                if (config.tunnelUrl && config.status === 'online') {
-                    // 有网址且状态为在线，直接跳转
-                    window.location.href = config.tunnelUrl;
+                if (config.tunnelUrl) {
+                    // 有网址，验证是否真的可访问
+                    console.log('检测网址:', config.tunnelUrl);
+                    const isAlive = await checkUrlAlive(config.tunnelUrl);
+
+                    if (isAlive) {
+                        // 网址可用，直接跳转
+                        console.log('✅ 服务在线，准备跳转');
+                        window.location.href = config.tunnelUrl;
+                    } else {
+                        // 网址无法访问，显示离线
+                        console.log('❌ 服务离线');
+                        showOfflineMessage();
+                    }
                 } else {
-                    // 无网址或状态不是online，显示离线
+                    // 无网址显示离线
                     showOfflineMessage();
                 }
             } catch (error) {
                 console.error('加载失败:', error);
-                // 加载失败显示离线
                 showOfflineMessage();
+            }
+        }
+
+        // 检查URL是否可访问（改进版）
+        async function checkUrlAlive(url) {
+            try {
+                // 创建一个Image对象尝试加载favicon（绕过CORS）
+                return new Promise((resolve) => {
+                    const timeout = setTimeout(() => {
+                        resolve(false);
+                    }, 5000); // 5秒超时
+
+                    // 方法1: 尝试加载favicon
+                    const img = new Image();
+                    img.onload = () => {
+                        clearTimeout(timeout);
+                        resolve(true);
+                    };
+                    img.onerror = () => {
+                        // favicon失败，尝试fetch
+                        fetch(url + '/login.html', {
+                            method: 'HEAD',
+                            mode: 'no-cors',
+                            cache: 'no-cache'
+                        }).then(() => {
+                            clearTimeout(timeout);
+                            resolve(true);
+                        }).catch(() => {
+                            clearTimeout(timeout);
+                            resolve(false);
+                        });
+                    };
+                    img.src = url + '/favicon.ico?t=' + Date.now();
+                });
+            } catch (error) {
+                console.log('检测失败:', error);
+                return false;
             }
         }
 
