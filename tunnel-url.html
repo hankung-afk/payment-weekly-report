@@ -345,39 +345,23 @@
             }
         }
 
-        // 检查URL是否可访问（改进版）
+        // 检查URL是否可访问（简化版）
         async function checkUrlAlive(url) {
             try {
-                // 创建一个Image对象尝试加载favicon（绕过CORS）
-                return new Promise((resolve) => {
-                    const timeout = setTimeout(() => {
-                        resolve(false);
-                    }, 5000); // 5秒超时
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 3000);
 
-                    // 方法1: 尝试加载favicon
-                    const img = new Image();
-                    img.onload = () => {
-                        clearTimeout(timeout);
-                        resolve(true);
-                    };
-                    img.onerror = () => {
-                        // favicon失败，尝试fetch
-                        fetch(url + '/login.html', {
-                            method: 'HEAD',
-                            mode: 'no-cors',
-                            cache: 'no-cache'
-                        }).then(() => {
-                            clearTimeout(timeout);
-                            resolve(true);
-                        }).catch(() => {
-                            clearTimeout(timeout);
-                            resolve(false);
-                        });
-                    };
-                    img.src = url + '/favicon.ico?t=' + Date.now();
+                await fetch(url + '/login.html', {
+                    method: 'HEAD',
+                    mode: 'no-cors',
+                    cache: 'no-cache',
+                    signal: controller.signal
                 });
+
+                clearTimeout(timeoutId);
+                return true;
             } catch (error) {
-                console.log('检测失败:', error);
+                console.log('服务离线:', error.message);
                 return false;
             }
         }
